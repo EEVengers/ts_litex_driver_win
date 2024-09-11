@@ -8,7 +8,7 @@ Class=Multifunction ; TODO: specify appropriate Class
 ClassGuid={4d36e971-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
 Provider=%ManufacturerName%
 CatalogFile=litepciedrv.cat
-DriverVer= ; TODO: set DriverVer in stampinf property pages
+DriverVer=
 PnpLockdown=1
 
 [DestinationDirs]
@@ -27,48 +27,12 @@ WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with
 ;*****************************************
 
 [Manufacturer]
-%ManufacturerName%=Litex,NT$ARCH$
+%ManufacturerName%=EEVengers,NT$ARCH$
 
-[Litex.NT$ARCH$]
+[EEVengers.NT$ARCH$]
 ; DisplayName				Section					DeviceId
 ; -----------				-------					--------
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9011
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9012
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9014
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9018
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9021
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9022
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9024
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9028
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9031
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9032
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9034
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_9038
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_903f
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8011
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8012
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8014
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8018
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8021
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8022
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8024
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8028
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8031
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8032
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8034
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_8038
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7011
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7012
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7014
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7018
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7021
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7022
 %litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7024
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7028
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7031
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7032
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7034
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7038
 
 [litepciedrv_Device.NT]
 CopyFiles=Drivers_Dir
@@ -120,7 +84,7 @@ KmdfLibraryVersion = $KMDFVERSION$
 
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
-ManufacturerName="Litex"
-DiskName = "litepciedrv Installation Disk"
-litepciedrv.DeviceDesc = "litepcie Device"
-litepciedrv.SVCDESC = "litepciedrv Service"
+ManufacturerName="EEVengers"
+DiskName = "Thunderscope Installation Disk"
+litepciedrv.DeviceDesc = "Thunderscope"
+litepciedrv.SVCDESC = "TS litepciedrv Service"
