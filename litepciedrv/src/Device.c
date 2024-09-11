@@ -370,7 +370,7 @@ NTSTATUS litepciedrv_DeviceClose(WDFDEVICE wdfDevice)
 VOID litepciedrv_ChannelRead(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T length)
 {
     SIZE_T bytesRead = 0;
-    UINT32 overflows = 0;
+    INT64 overflows = 0;
     WDFMEMORY outBuf;
     NTSTATUS status;
 
@@ -423,7 +423,8 @@ VOID litepciedrv_ChannelRead(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T 
 
     if (overflows > 0)
     {
-        TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "Overflow Error in ChannelRead: %d\n", overflows);
+        TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "Overflow Error in ChannelRead: %lld\n", overflows);
+        channel->dma.writer_overflows += overflows;
     }
 
     // Read Complete, no more buffers can be transferred
@@ -463,7 +464,7 @@ VOID litepciedrv_ChannelReadCancel(WDFREQUEST request)
 VOID litepciedrv_ChannelWrite(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T length)
 {
     SIZE_T bytesWritten = 0;
-    UINT32 overflows = 0;
+    INT64 overflows = 0;
     WDFMEMORY inBuf;
     NTSTATUS status;
 
@@ -512,7 +513,8 @@ VOID litepciedrv_ChannelWrite(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T
 
     if (overflows > 0)
     {
-        TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "Overflow Error in ChannelWrite: %d\n", overflows);
+        TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "Overflow Error in ChannelWrite: %lld\n", overflows);
+        channel->dma.reader_overflows += overflows;
     }
 
     // Write Complete, no more buffers can be transferred
@@ -580,6 +582,7 @@ VOID litepcie_dma_writer_start(PDEVICE_CONTEXT dev, UINT32 index)
     dmachan->writer_hw_count = 0;
     dmachan->writer_hw_count_last = 0;
     dmachan->writer_sw_count = 0;
+    dmachan->writer_overflows = 0;
 
     /* Start DMA Writer. */
     litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_WRITER_ENABLE_OFFSET, 1);
@@ -603,6 +606,7 @@ VOID litepcie_dma_writer_stop(PDEVICE_CONTEXT dev, UINT32 index)
     dmachan->writer_hw_count = 0;
     dmachan->writer_hw_count_last = 0;
     dmachan->writer_sw_count = 0;
+    dmachan->writer_overflows = 0;
 }
 
 VOID litepcie_dma_reader_start(PDEVICE_CONTEXT dev, UINT32 index)
@@ -636,6 +640,7 @@ VOID litepcie_dma_reader_start(PDEVICE_CONTEXT dev, UINT32 index)
     dmachan->reader_hw_count = 0;
     dmachan->reader_hw_count_last = 0;
     dmachan->reader_sw_count = 0;
+    dmachan->reader_overflows = 0;
 
     /* start dma reader */
     litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_READER_ENABLE_OFFSET, 1);
@@ -658,6 +663,7 @@ VOID litepcie_dma_reader_stop(PDEVICE_CONTEXT dev, UINT32 index)
     dmachan->reader_hw_count = 0;
     dmachan->reader_hw_count_last = 0;
     dmachan->reader_sw_count = 0;
+    dmachan->reader_overflows = 0;
 }
 
 VOID litepcie_enable_interrupt(PDEVICE_CONTEXT dev, UINT32 interrupt)

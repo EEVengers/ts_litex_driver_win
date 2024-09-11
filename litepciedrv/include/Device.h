@@ -38,9 +38,11 @@ struct litepcie_dma_chan {
     volatile INT64 reader_hw_count;
     volatile INT64 reader_hw_count_last;
     INT64 reader_sw_count;
+    INT64 reader_overflows;
     volatile INT64 writer_hw_count;
     volatile INT64 writer_hw_count_last;
     INT64 writer_sw_count;
+    INT64 writer_overflows;
     UINT8 writer_enable;
     UINT8 reader_enable;
     UINT8 reader_lock;

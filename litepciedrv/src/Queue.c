@@ -263,6 +263,7 @@ Return Value:
 
                     pDmaWriterOutData->hw_count = fileCtx->dmaChan->dma.writer_hw_count;
                     pDmaWriterOutData->sw_count = fileCtx->dmaChan->dma.writer_sw_count;
+                    pDmaWriterOutData->lost_count = fileCtx->dmaChan->dma.writer_overflows;
                 }
             }
         }
@@ -305,6 +306,7 @@ Return Value:
 
                     pDmaReaderOutData->hw_count = fileCtx->dmaChan->dma.reader_hw_count;
                     pDmaReaderOutData->sw_count = fileCtx->dmaChan->dma.reader_sw_count;
+                    pDmaReaderOutData->lost_count = fileCtx->dmaChan->dma.reader_overflows;
                 }
             }
         }
