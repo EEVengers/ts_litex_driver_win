@@ -29,12 +29,8 @@ struct litepcie_dma_chan {
     WDFREQUEST writeRequest;
     SIZE_T writeBytes;
     SIZE_T writeReqBytes;
-    WDFCOMMONBUFFER readBuffer;
-    WDFCOMMONBUFFER writeBuffer;
-    PVOID reader_handle[DMA_BUFFER_COUNT];
-    PVOID writer_handle[DMA_BUFFER_COUNT];
-    PHYSICAL_ADDRESS reader_addr[DMA_BUFFER_COUNT];
-    PHYSICAL_ADDRESS writer_addr[DMA_BUFFER_COUNT];
+    WDFCOMMONBUFFER readBuffer[DMA_BUFFER_COUNT];
+    WDFCOMMONBUFFER writeBuffer[DMA_BUFFER_COUNT];
     volatile INT64 reader_hw_count;
     volatile INT64 reader_hw_count_last;
     INT64 reader_sw_count;

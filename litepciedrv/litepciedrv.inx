@@ -85,6 +85,6 @@ KmdfLibraryVersion = $KMDFVERSION$
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
 ManufacturerName="EEVengers"
-DiskName = "Thunderscope Installation Disk"
-litepciedrv.DeviceDesc = "Thunderscope"
+DiskName = "ThunderScope Installation Disk"
+litepciedrv.DeviceDesc = "ThunderScope"
 litepciedrv.SVCDESC = "TS litepciedrv Service"

@@ -297,46 +297,30 @@ NTSTATUS litepciedrv_DeviceOpen(WDFDEVICE wdfDevice,
     /* for each dma channel */
     for (UINT32 i = 0; i < litepcie->channels; i++) {
         struct litepcie_dma_chan* dmachan = &litepcie->chan[i].dma;
-        //Allocate Common buffer for the channel read transactions
-        status = WdfCommonBufferCreate(litepcie->dmaEnabler,
-                                        DMA_BUFFER_TOTAL_SIZE,
-                                        WDF_NO_OBJECT_ATTRIBUTES,
-                                        &dmachan->readBuffer);
-        if (!NT_SUCCESS(status)) {
-            TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "Failed to create Read Buffer for channel %d: %!STATUS!", i, status);
-            return status;
-        }
-
-        //Allocate a Common buffer for the channel write transactions
-        status = WdfCommonBufferCreate(litepcie->dmaEnabler,
-                                        DMA_BUFFER_TOTAL_SIZE,
-                                        WDF_NO_OBJECT_ATTRIBUTES,
-                                        &dmachan->writeBuffer);
-        if (!NT_SUCCESS(status)) {
-            TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "Failed to create Write Buffer for channel %d: %!STATUS!", i, status);
-            return status;
-        }
-        
-        PVOID rdVirtAddr = WdfCommonBufferGetAlignedVirtualAddress(dmachan->readBuffer);
-        PHYSICAL_ADDRESS rdPhysAddr = WdfCommonBufferGetAlignedLogicalAddress(dmachan->readBuffer);
-        PVOID wrVirtAddr = WdfCommonBufferGetAlignedVirtualAddress(dmachan->writeBuffer);
-        PHYSICAL_ADDRESS wrPhysAddr = WdfCommonBufferGetAlignedLogicalAddress(dmachan->writeBuffer);
 
         /* for each dma buffer */
-        for (UINT32 j = 0; j < DMA_BUFFER_COUNT; j++) {
-            /* assign reader buffers */
-            dmachan->reader_handle[j] = (PVOID)((PUINT8)rdVirtAddr + (j * DMA_BUFFER_SIZE));
-            dmachan->reader_addr[j].QuadPart = rdPhysAddr.QuadPart + (j * DMA_BUFFER_SIZE);
-            /* assign writer buffers */
-            dmachan->writer_handle[j] = (PVOID)((PUINT8)wrVirtAddr + (j * DMA_BUFFER_SIZE));
-            dmachan->writer_addr[j].QuadPart = wrPhysAddr.QuadPart + (j * DMA_BUFFER_SIZE);
-
-            /* check */
-            if ((dmachan->reader_addr[j].QuadPart == 0)
-                || (dmachan->writer_addr[j].QuadPart == 0)) {
-                TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "Failed to allocate dma buffer for index %d\n", i);
-                return STATUS_NO_MEMORY;
+        for (UINT32 j = 0; j < DMA_BUFFER_COUNT; j++)
+        {
+            //Allocate Common buffer for the channel read transactions
+            status = WdfCommonBufferCreate(litepcie->dmaEnabler,
+                                            DMA_BUFFER_SIZE,
+                                            WDF_NO_OBJECT_ATTRIBUTES,
+                                            &dmachan->readBuffer[j]);
+            if (!NT_SUCCESS(status)) {
+                TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "Failed to create Read Buffer %d for channel %d: %!STATUS!", j, i, status);
+                return status;
             }
+
+            //Allocate a Common buffer for the channel write transactions
+            status = WdfCommonBufferCreate(litepcie->dmaEnabler,
+                                            DMA_BUFFER_SIZE,
+                                            WDF_NO_OBJECT_ATTRIBUTES,
+                                            &dmachan->writeBuffer[j]);
+            if (!NT_SUCCESS(status)) {
+                TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "Failed to create Write Buffer %d for channel %d: %!STATUS!", j, i, status);
+                return status;
+            }
+
         }
     }
 
@@ -406,10 +390,8 @@ VOID litepciedrv_ChannelRead(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T 
             }
             else
             {
-
-                WdfMemoryCopyFromBuffer(outBuf, bytesRead,
-                    channel->dma.writer_handle[channel->dma.writer_sw_count % DMA_BUFFER_COUNT],
-                    DMA_BUFFER_SIZE);
+                PVOID writer_addr = WdfCommonBufferGetAlignedVirtualAddress(channel->dma.writeBuffer[channel->dma.writer_sw_count % DMA_BUFFER_COUNT]);
+                WdfMemoryCopyFromBuffer(outBuf, bytesRead, writer_addr, DMA_BUFFER_SIZE);
                 bytesRead += DMA_BUFFER_SIZE;
             }
             channel->dma.writer_sw_count += 1;
@@ -499,9 +481,8 @@ VOID litepciedrv_ChannelWrite(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T
                 overflows++;
             }
 
-            WdfMemoryCopyToBuffer(inBuf, bytesWritten,
-                channel->dma.reader_handle[channel->dma.reader_sw_count % DMA_BUFFER_COUNT],
-                DMA_BUFFER_SIZE);
+            PVOID read_handle = WdfCommonBufferGetAlignedVirtualAddress(channel->dma.readBuffer[channel->dma.reader_sw_count % DMA_BUFFER_COUNT]);
+            WdfMemoryCopyToBuffer(inBuf, bytesWritten, read_handle, DMA_BUFFER_SIZE);
             channel->dma.reader_sw_count += 1;
             bytesWritten += DMA_BUFFER_SIZE;
         }
@@ -571,10 +552,12 @@ VOID litepcie_dma_writer_start(PDEVICE_CONTEXT dev, UINT32 index)
 #endif
             ((!((i % DMA_BUFFER_PER_IRQ) == (DMA_BUFFER_PER_IRQ - 1))) * DMA_IRQ_DISABLE) | /* generate an msi */
             DMA_BUFFER_SIZE);                                  /* every n buffers */
+
+        PHYSICAL_ADDRESS writer_addr = WdfCommonBufferGetAlignedLogicalAddress(dmachan->writeBuffer[i]);
         /* Fill 32-bit Address LSB. */
-        litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_WRITER_TABLE_VALUE_OFFSET + 4, dmachan->writer_addr[i].LowPart);
+        litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_WRITER_TABLE_VALUE_OFFSET + 4, writer_addr.LowPart);
         /* Write descriptor (and fill 32-bit Address MSB for 64-bit mode). */
-        litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_WRITER_TABLE_WE_OFFSET, dmachan->writer_addr[i].HighPart);
+        litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_WRITER_TABLE_WE_OFFSET, writer_addr.HighPart);
     }
     litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_WRITER_TABLE_LOOP_PROG_N_OFFSET, 1);
 
@@ -629,10 +612,12 @@ VOID litepcie_dma_reader_start(PDEVICE_CONTEXT dev, UINT32 index)
 #endif
             ((!((i % DMA_BUFFER_PER_IRQ) == (DMA_BUFFER_PER_IRQ - 1))) * DMA_IRQ_DISABLE) | /* generate an msi */
             DMA_BUFFER_SIZE);                                  /* every n buffers */
+
+        PHYSICAL_ADDRESS reader_addr = WdfCommonBufferGetAlignedLogicalAddress(dmachan->readBuffer[i]);
         /* Fill 32-bit Address LSB. */
-        litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_READER_TABLE_VALUE_OFFSET + 4, dmachan->reader_addr[i].LowPart);
+        litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_READER_TABLE_VALUE_OFFSET + 4, reader_addr.LowPart);
         /* Write descriptor (and fill 32-bit Address MSB for 64-bit mode). */
-        litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_READER_TABLE_WE_OFFSET, dmachan->reader_addr[i].HighPart);
+        litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_READER_TABLE_WE_OFFSET, reader_addr.HighPart);
     }
     litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_READER_TABLE_LOOP_PROG_N_OFFSET, 1);
 
