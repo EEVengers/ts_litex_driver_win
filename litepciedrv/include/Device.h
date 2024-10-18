@@ -48,7 +48,6 @@ struct litepcie_dma_chan {
 typedef struct litepcie_chan {
     struct _DEVICE_CONTEXT* litepcie_dev;
     struct litepcie_dma_chan dma;
-    UINT32 block_size;
     UINT32 index;
 }LITEPCIE_CHAN, *PLITEPCIE_CHAN;
 

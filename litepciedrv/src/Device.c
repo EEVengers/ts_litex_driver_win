@@ -194,7 +194,6 @@ NTSTATUS litepciedrv_DeviceOpen(WDFDEVICE wdfDevice,
 
     for (UINT32 i = 0; i < litepcie->channels; i++) {
         litepcie->chan[i].index = i;
-        litepcie->chan[i].block_size = DMA_BUFFER_SIZE;
         litepcie->chan[i].litepcie_dev = litepcie;
         litepcie->chan[i].dma.writer_lock = 0;
         litepcie->chan[i].dma.reader_lock = 0;
@@ -280,7 +279,7 @@ NTSTATUS litepciedrv_DeviceOpen(WDFDEVICE wdfDevice,
 #else
             WdfDmaProfileScatterGatherDuplex,
 #endif
-            DMA_BUFFER_SIZE);
+            DMA_RD_BUFFER_SIZE > DMA_WR_BUFFER_SIZE ? DMA_RD_BUFFER_SIZE : DMA_WR_BUFFER_SIZE);
     status = WdfDmaEnablerCreate(litepcie->deviceDrv, &dmaConfig, WDF_NO_OBJECT_ATTRIBUTES, &litepcie->dmaEnabler);
     if (!NT_SUCCESS(status)) {
         TraceEvents(TRACE_LEVEL_ERROR, TRACE_DEVICE, "Failed to create dmaEnabler: %!STATUS!", status);
@@ -303,7 +302,7 @@ NTSTATUS litepciedrv_DeviceOpen(WDFDEVICE wdfDevice,
         {
             //Allocate Common buffer for the channel read transactions
             status = WdfCommonBufferCreate(litepcie->dmaEnabler,
-                                            DMA_BUFFER_SIZE,
+                                            DMA_RD_BUFFER_SIZE,
                                             WDF_NO_OBJECT_ATTRIBUTES,
                                             &dmachan->readBuffer[j]);
             if (!NT_SUCCESS(status)) {
@@ -313,7 +312,7 @@ NTSTATUS litepciedrv_DeviceOpen(WDFDEVICE wdfDevice,
 
             //Allocate a Common buffer for the channel write transactions
             status = WdfCommonBufferCreate(litepcie->dmaEnabler,
-                                            DMA_BUFFER_SIZE,
+                                            DMA_WR_BUFFER_SIZE,
                                             WDF_NO_OBJECT_ATTRIBUTES,
                                             &dmachan->writeBuffer[j]);
             if (!NT_SUCCESS(status)) {
@@ -370,9 +369,9 @@ VOID litepciedrv_ChannelRead(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T 
     bytesRead = channel->dma.readBytes;
     while (bytesRead < length)
     {
-        if ((length - bytesRead) < DMA_BUFFER_SIZE)
+        if ((length - bytesRead) < DMA_WR_BUFFER_SIZE)
         {
-            //Only allow reading in increments of DMA_BUFFER_SIZE
+            //Only allow reading in increments of DMA_WR_BUFFER_SIZE
             break;
         }
 
@@ -391,8 +390,8 @@ VOID litepciedrv_ChannelRead(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T 
             else
             {
                 PVOID writer_addr = WdfCommonBufferGetAlignedVirtualAddress(channel->dma.writeBuffer[channel->dma.writer_sw_count % DMA_BUFFER_COUNT]);
-                WdfMemoryCopyFromBuffer(outBuf, bytesRead, writer_addr, DMA_BUFFER_SIZE);
-                bytesRead += DMA_BUFFER_SIZE;
+                WdfMemoryCopyFromBuffer(outBuf, bytesRead, writer_addr, DMA_WR_BUFFER_SIZE);
+                bytesRead += DMA_WR_BUFFER_SIZE;
             }
             channel->dma.writer_sw_count += 1;
         }
@@ -410,7 +409,7 @@ VOID litepciedrv_ChannelRead(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T 
     }
 
     // Read Complete, no more buffers can be transferred
-    if ((length - bytesRead) < DMA_BUFFER_SIZE)
+    if ((length - bytesRead) < DMA_WR_BUFFER_SIZE)
     {
         channel->dma.readRequest = NULL;
         channel->dma.readBytes = 0;
@@ -462,9 +461,9 @@ VOID litepciedrv_ChannelWrite(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T
     bytesWritten = channel->dma.writeBytes;
     while (bytesWritten < length)
     {
-        if ((length - bytesWritten) < DMA_BUFFER_SIZE)
+        if ((length - bytesWritten) < DMA_RD_BUFFER_SIZE)
         {
-            //Only allow writing in increments of DMA_BUFFER_SIZE
+            //Only allow writing in increments of DMA_RD_BUFFER_SIZE
             break;
         }
 
@@ -482,9 +481,9 @@ VOID litepciedrv_ChannelWrite(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T
             }
 
             PVOID read_handle = WdfCommonBufferGetAlignedVirtualAddress(channel->dma.readBuffer[channel->dma.reader_sw_count % DMA_BUFFER_COUNT]);
-            WdfMemoryCopyToBuffer(inBuf, bytesWritten, read_handle, DMA_BUFFER_SIZE);
+            WdfMemoryCopyToBuffer(inBuf, bytesWritten, read_handle, DMA_RD_BUFFER_SIZE);
             channel->dma.reader_sw_count += 1;
-            bytesWritten += DMA_BUFFER_SIZE;
+            bytesWritten += DMA_RD_BUFFER_SIZE;
         }
         else
         {
@@ -499,7 +498,7 @@ VOID litepciedrv_ChannelWrite(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T
     }
 
     // Write Complete, no more buffers can be transferred
-    if ((length - bytesWritten) < DMA_BUFFER_SIZE)
+    if ((length - bytesWritten) < DMA_RD_BUFFER_SIZE)
     {
         channel->dma.writeRequest = NULL;
         channel->dma.writeBytes = 0;
@@ -551,7 +550,7 @@ VOID litepcie_dma_writer_start(PDEVICE_CONTEXT dev, UINT32 index)
             DMA_LAST_DISABLE |
 #endif
             ((!((i % DMA_BUFFER_PER_IRQ) == (DMA_BUFFER_PER_IRQ - 1))) * DMA_IRQ_DISABLE) | /* generate an msi */
-            DMA_BUFFER_SIZE);                                  /* every n buffers */
+            DMA_WR_BUFFER_SIZE);                                  /* every n buffers */
 
         PHYSICAL_ADDRESS writer_addr = WdfCommonBufferGetAlignedLogicalAddress(dmachan->writeBuffer[i]);
         /* Fill 32-bit Address LSB. */
@@ -611,7 +610,7 @@ VOID litepcie_dma_reader_start(PDEVICE_CONTEXT dev, UINT32 index)
             DMA_LAST_DISABLE |
 #endif
             ((!((i % DMA_BUFFER_PER_IRQ) == (DMA_BUFFER_PER_IRQ - 1))) * DMA_IRQ_DISABLE) | /* generate an msi */
-            DMA_BUFFER_SIZE);                                  /* every n buffers */
+            DMA_RD_BUFFER_SIZE);                                  /* every n buffers */
 
         PHYSICAL_ADDRESS reader_addr = WdfCommonBufferGetAlignedLogicalAddress(dmachan->readBuffer[i]);
         /* Fill 32-bit Address LSB. */

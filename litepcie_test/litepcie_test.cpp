@@ -25,6 +25,7 @@
 /* Parameters */
 /*------------*/
 
+#define DMA_BUFFER_SIZE (1024*16)
 #define DMA_CHECK_DATA   /* Un-comment to disable data check */
 //#define DMA_RANDOM_DATA  /* Un-comment to disable data random */
 

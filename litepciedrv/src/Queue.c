@@ -326,11 +326,11 @@ Return Value:
             if (status == STATUS_SUCCESS)
             {
                 pDmaInfoOutData->dma_tx_buf_offset = 0;
-                pDmaInfoOutData->dma_tx_buf_size = DMA_BUFFER_SIZE;
+                pDmaInfoOutData->dma_tx_buf_size = DMA_RD_BUFFER_SIZE;
                 pDmaInfoOutData->dma_tx_buf_count = DMA_BUFFER_COUNT;
 
                 pDmaInfoOutData->dma_rx_buf_offset = 0;
-                pDmaInfoOutData->dma_rx_buf_size = DMA_BUFFER_SIZE;
+                pDmaInfoOutData->dma_rx_buf_size = DMA_WR_BUFFER_SIZE;
                 pDmaInfoOutData->dma_rx_buf_count = DMA_BUFFER_COUNT;
             }
         }
