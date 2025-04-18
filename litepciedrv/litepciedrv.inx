@@ -4,8 +4,8 @@
 
 [Version]
 Signature="$WINDOWS NT$"
-Class=Multifunction ; TODO: specify appropriate Class
-ClassGuid={4d36e971-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Class="EEVengers_TM"
+ClassGuid={424b517a-019e-4a7a-9ee4-e985187d7d86} 
 Provider=%ManufacturerName%
 CatalogFile=litepciedrv.cat
 DriverVer=
@@ -22,6 +22,15 @@ litepciedrv_Device_CoInstaller_CopyFiles = 11
 litepciedrv.sys  = 1,,
 WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
 
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=EEVengers_TMClassReg
+
+[EEVengers_TMClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-9
+
 ;*****************************************
 ; Install Section
 ;*****************************************
@@ -32,7 +41,7 @@ WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with
 [EEVengers.NT$ARCH$]
 ; DisplayName				Section					DeviceId
 ; -----------				-------					--------
-%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_10ee&DEV_7024
+%litepciedrv.DeviceDesc%=	litepciedrv_Device,		PCI\VEN_20A7&DEV_0101
 
 [litepciedrv_Device.NT]
 CopyFiles=Drivers_Dir
@@ -85,6 +94,7 @@ KmdfLibraryVersion = $KMDFVERSION$
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
 ManufacturerName="EEVengers"
+ClassName = "EEVengers Test and Measurement Devices"
 DiskName = "ThunderScope Installation Disk"
 litepciedrv.DeviceDesc = "ThunderScope"
 litepciedrv.SVCDESC = "TS litepciedrv Service"
