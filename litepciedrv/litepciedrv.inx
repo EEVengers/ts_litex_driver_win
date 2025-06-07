@@ -94,7 +94,7 @@ KmdfLibraryVersion = $KMDFVERSION$
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
 ManufacturerName="EEVengers"
-ClassName = "EEVengers Test and Measurement Devices"
+ClassName = "Test and measurement devices"
 DiskName = "ThunderScope Installation Disk"
 litepciedrv.DeviceDesc = "ThunderScope"
 litepciedrv.SVCDESC = "TS litepciedrv Service"
