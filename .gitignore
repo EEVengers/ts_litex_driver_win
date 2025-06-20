@@ -5,3 +5,4 @@ Debug/
 *.vcxproj.user
 build/*
 artifacts/*
+ARM64/

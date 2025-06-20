@@ -100,9 +100,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <PublicIncludeDirectories>$(SolutionDir)litepciedrv\public_h;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
+    <PublicIncludeDirectories>$(SolutionDir)litepciedrv\public_h;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -138,19 +140,27 @@
     <ClCompile>
       <WppEnabled>true</WppEnabled>
       <WppRecorderEnabled>true</WppRecorderEnabled>
-      <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
+      <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">$(ProjectDir)include\Trace.h</WppScanConfigurationData>
       <WppKernelMode>true</WppKernelMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)public_h;$(ProjectDir)include;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
     </DriverSign>
+    <Link>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <WppEnabled>true</WppEnabled>
       <WppRecorderEnabled>true</WppRecorderEnabled>
-      <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">trace.h</WppScanConfigurationData>
+      <WppScanConfigurationData Condition="'%(ClCompile.ScanConfigurationData)' == ''">$(ProjectDir)include\Trace.h</WppScanConfigurationData>
       <WppKernelMode>true</WppKernelMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)public_h;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <DriverSign>
       <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
