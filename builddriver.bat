@@ -2,7 +2,7 @@ echo off
 setlocal
 
 :: Get Commit Date
-for /f "tokens=1,2,3 delims=-" %%a in ('"git show -s --format=%%cs"') do SET COMMIT_DATE=%%b/%%c/%%a
+for /f "tokens=1" %%a in ('"git show -s --format=%%cd --date=format:%%m/%%d/%%Y"') do SET COMMIT_DATE=%%a
 
 :: Get Commit timestamp
 for /f "tokens=2" %%a in ('"git show -s --format=%%ci"') do SET COMMIT_TIMESTAMP=%%a
