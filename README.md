@@ -36,6 +36,11 @@ The library is intended to have a compatible API with the liblitepcie found in t
 <LitePCIe-Repo-Dir> > msbuild ts_litex_driver.sln /p:Configuration=Release /p:Platform=x64
 ```
 
+4. To create a driver with a release version, build the solution with the following properties
+```cmd
+<LitePCIe-Repo-Dir> > msbuild ts_litex_driver.sln /p:Configuration=Release /p:Platform=x64 /p:DriverDate=<tag-date> /p:DriverVersion=<tag-version>
+```
+
 ## Build Library and test app with cmake
 
 ```cmd

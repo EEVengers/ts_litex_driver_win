@@ -34,9 +34,9 @@
   <ItemGroup>
     <Inf Include="thunderscopedrv.inx">
       <SpecifyDriverVerDirectiveDate>true</SpecifyDriverVerDirectiveDate>
-      <DateStamp>06/17/2025</DateStamp>
+      <DateStamp Condition="$(DriverDate) != ''">$(DriverDate)</DateStamp>
       <SpecifyDriverVerDirectiveVer>true</SpecifyDriverVerDirectiveVer>
-      <TimeStamp>0.1.0.0</TimeStamp>
+      <TimeStamp Condition="$(DriverVersion) != ''">$(DriverVersion)</TimeStamp>
     </Inf>
   </ItemGroup>
   <PropertyGroup Label="Globals">
