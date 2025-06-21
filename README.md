@@ -33,7 +33,21 @@ The library is intended to have a compatible API with the liblitepcie found in t
 
 3. From within the EWDK environment, build the solution with `msbuild`
 ```cmd
-<LitePCIe-Repo-Dir>\litepciedrv > msbuild litepciedrv.vcxproj /p:Configuration=Debug /p:Platform=x64
+<Driver-Repo-Dir> > msbuild ts_litex_driver.sln /p:Configuration=Release /p:Platform=x64
+```
+
+4. To create a driver with a release version, build the solution with the following properties
+```cmd
+<Driver-Repo-Dir> > msbuild ts_litex_driver.sln /p:Configuration=Release /p:Platform=x64 /p:DriverDate=<tag-date> /p:DriverVersion=<tag-version>
+```
+
+## Install Debug Driver
+
+1. Open a terminal with Admin privileges
+
+2. From the root of the driver project, use `pnputil` to install the driver.
+```cmd
+<Driver-Repo-Dir> > pnputil /add-driver x64\Debug\thunderscopedrv\thunderscopedrv.inf /install
 ```
 
 ## Build Library and test app with cmake
