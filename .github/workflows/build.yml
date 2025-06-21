@@ -18,7 +18,10 @@ jobs:
 
       - name: Build solution
         run: |
-          msbuild ${{ env.Solution_Path }} /p:Configuration=${{ env.Configuration }} /p:Platform=${{ env.Platform }}
+          $COMMIT_DATE = git show -s --format=%cd --date=format:%m/%d/%Y
+          $COMMIT_TIMESTAMP = (git show -s --format=%ci).Split(" ")[1]
+          $COMMIT_VERSION = $COMMIT_TIMESTAMP -replace ":", "."
+          msbuild ${{ env.Solution_Path }} /p:Configuration=${{ env.Configuration }} /p:Platform=${{ env.Platform }} /p:DriverDate=$COMMIT_DATE /p:DriverVersion=$COMMIT_VERSION
         env:
           Configuration: ${{ matrix.configuration }}
           Platform: ${{ matrix.platform }}
@@ -26,8 +29,8 @@ jobs:
       - name: Upload Driver
         uses: actions/upload-artifact@v4
         with:
-          name: driver_${{matrix.configuration}}_${{matrix.platform}}
-          path: ${{matrix.platform}}/*
+          name: thunderscopedrv_${{matrix.configuration}}_${{matrix.platform}}
+          path: ${{matrix.platform}}/${{matrix.configuration}}/*
         env:
           Configuration: ${{ matrix.configuration }}
           Platform: ${{ matrix.platform }}
