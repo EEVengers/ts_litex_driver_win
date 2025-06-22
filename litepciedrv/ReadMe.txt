@@ -32,7 +32,7 @@ Queue.c & Queue.h
 Trace.h
     Definitions for WPP tracing.
 
- ** Note: Be sure to copy the soc.h and csr.h files from your litex build in the litepciedrv/public_h folder before building
+ ** Note: Be sure to copy csr.h file from your litex build in the litepciedrv/public_h folder before building
 
 /////////////////////////////////////////////////////////////////////////////
 

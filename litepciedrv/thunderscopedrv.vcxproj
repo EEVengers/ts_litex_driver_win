@@ -29,7 +29,6 @@
     <ClInclude Include="public_h\csr.h" />
     <ClInclude Include="public_h\litepcie_dmadrv.h" />
     <ClInclude Include="public_h\litepcie.h" />
-    <ClInclude Include="public_h\soc.h" />
   </ItemGroup>
   <ItemGroup>
     <Inf Include="thunderscopedrv.inx">

@@ -26,7 +26,6 @@ add_definitions(-DUNICODE -D_UNICODE)
 
 set(litepciedrv_PUBLIC_HEADERS 
     ${CMAKE_SOURCE_DIR}/litepciedrv/public_h/csr.h
-    ${CMAKE_SOURCE_DIR}/litepciedrv/public_h/soc.h
     ${CMAKE_SOURCE_DIR}/litepciedrv/public_h/litepcie_dmadrv.h
     ${CMAKE_SOURCE_DIR}/litepciedrv/public_h/litepcie.h
     )

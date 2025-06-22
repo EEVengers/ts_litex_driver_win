@@ -20,7 +20,6 @@ extern "C" {
 #pragma warning (pop)
 
 #include "csr.h"
-#include "soc.h"
 #include "litepcie_dmadrv.h"
 
 /* spi */

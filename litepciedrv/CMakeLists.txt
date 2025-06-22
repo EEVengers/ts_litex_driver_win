@@ -40,7 +40,6 @@ set(thunderscopedrv_PUBLIC_HEADERS
     public_h/litepcie_dmadrv.h
     public_h/litepcie.h
     public_h/csr.h
-    public_h/soc.h
     )
 
 #add_library(litepciedrv STATIC ${litepciedrv_SOURCES} ${litepciedrv_HEADERS} ${litepciedrv_PUBLIC_HEADERS})
