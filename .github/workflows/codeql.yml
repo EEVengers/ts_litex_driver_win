@@ -1,0 +1,38 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [main, "*_dev"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: windows-2022
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        tools: 2.21.4
+        languages: 'c-cpp'
+        build-mode: 'manual'
+        packs: |
+          microsoft/windows-drivers@1.8.0,
+          microsoft/cpp-queries@0.0.4
+
+    - name: Build Driver
+      run: |
+        msbuild ts_litex_driver.sln /p:Configuration=Release /p:Platform=x64
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        check_name: "microsoft/windows-drivers:windows-driver-suites/recommended.qls"
