@@ -6,3 +6,4 @@ Debug/
 build/*
 artifacts/*
 ARM64/
+*.sarif
