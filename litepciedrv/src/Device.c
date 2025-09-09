@@ -147,7 +147,7 @@ NTSTATUS litepciedrv_DeviceOpen(WDFDEVICE wdfDevice,
     const ULONG numRes = WdfCmResourceListGetCount(ResourcesTranslated);
     TraceEvents(TRACE_LEVEL_VERBOSE, TRACE_DEVICE, "# PCIe resources = %d", numRes);
 
-    for (UINT8 i = 0; i < numRes; i++) {
+    for (ULONG i = 0; i < numRes; i++) {
         PCM_PARTIAL_RESOURCE_DESCRIPTOR resource = WdfCmResourceListGetDescriptor(ResourcesTranslated, i);
         if (!resource) {
             TraceEvents(TRACE_LEVEL_WARNING, TRACE_DEVICE, "WdfResourceCmGetDescriptor() fails");
