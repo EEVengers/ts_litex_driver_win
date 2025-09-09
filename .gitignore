@@ -7,3 +7,4 @@ build/*
 artifacts/*
 ARM64/
 *.sarif
+codeql_db/

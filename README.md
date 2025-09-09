@@ -56,3 +56,12 @@ The library is intended to have a compatible API with the liblitepcie found in t
 <LitePCIe-Repo-Dir>\build > cmake ..
 <LitePCIe-Repo-Dir>\build > cmake --build .
 ```
+
+
+## Run CodeQL
+See [Run CodeQL Analysis on Windows DriverCode](https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/static-tools-and-codeql) for setup instructions.  Summarized below:
+
+- Install CodeQL CLI
+- Install WHCP Packs
+
+Run the `runCodeQL.bat` script to run the This should be run within the same environment as a build.
