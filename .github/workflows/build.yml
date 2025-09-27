@@ -6,7 +6,7 @@ jobs:
       matrix:
         configuration: [Debug, Release]
         platform: [x64]
-    runs-on: windows-2022
+    runs-on: windows-2025
     env:
       Solution_Path: ts_litex_driver.sln
     steps:
@@ -17,6 +17,12 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1.3
         with:
           msbuild-architecture: x64
+
+      - name: Install Packages
+        run: |
+          msbuild ${{ env.Solution_Path }} -t:build -restore -p:RestorePackagesConfig=true /p:Platform=${{ env.Platform }}
+        env:
+          Platform: ${{ matrix.platform }}
 
       - name: Build solution
         run: |
