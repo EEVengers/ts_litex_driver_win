@@ -197,6 +197,8 @@ NTSTATUS litepciedrv_DeviceOpen(WDFDEVICE wdfDevice,
         litepcie->chan[i].litepcie_dev = litepcie;
         litepcie->chan[i].dma.writer_lock = 0;
         litepcie->chan[i].dma.reader_lock = 0;
+        litepcie->chan[i].dma.writer_intr_count = DMA_BUFFER_PER_IRQ;
+        litepcie->chan[i].dma.reader_intr_count = DMA_BUFFER_PER_IRQ;
 
         WdfSpinLockCreate(WDF_NO_OBJECT_ATTRIBUTES, &litepcie->chan[i].dma.readerLock);
         WdfSpinLockCreate(WDF_NO_OBJECT_ATTRIBUTES, &litepcie->chan[i].dma.writerLock);
@@ -383,7 +385,7 @@ VOID litepciedrv_ChannelRead(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T 
 
         if ((available_count) > 0)
         {
-            if ((available_count) > (DMA_BUFFER_COUNT - DMA_BUFFER_PER_IRQ))
+            if ((available_count) > (DMA_BUFFER_COUNT - channel->dma.writer_intr_count))
             {
                 overflows++;
             }
@@ -537,6 +539,16 @@ VOID litepcie_dma_writer_start(PDEVICE_CONTEXT dev, UINT32 index)
     UINT32 i;
 
     dmachan = &dev->chan[index].dma;
+    
+    /* Validate Interrupt Config */
+    if(dmachan->writer_intr_count == 0)
+    {
+        dmachan->writer_intr_count = DMA_BUFFER_PER_IRQ;
+    }
+    else if (dmachan->writer_intr_count > (DMA_BUFFER_COUNT / 2))
+    {
+        dmachan->writer_intr_count = (DMA_BUFFER_COUNT / 2);
+    }
 
     /* Fill DMA Writer descriptors. */
     litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_WRITER_ENABLE_OFFSET, 0);
@@ -549,7 +561,7 @@ VOID litepcie_dma_writer_start(PDEVICE_CONTEXT dev, UINT32 index)
 #ifndef DMA_BUFFER_ALIGNED
             DMA_LAST_DISABLE |
 #endif
-            ((!((i % DMA_BUFFER_PER_IRQ) == (DMA_BUFFER_PER_IRQ - 1))) * DMA_IRQ_DISABLE) | /* generate an msi */
+            ((!((i % dmachan->writer_intr_count) == (dmachan->writer_intr_count - 1))) * DMA_IRQ_DISABLE) | /* generate an msi */
             DMA_WR_BUFFER_SIZE);                                  /* every n buffers */
 
         PHYSICAL_ADDRESS writer_addr = WdfCommonBufferGetAlignedLogicalAddress(dmachan->writeBuffer[i]);
@@ -598,6 +610,16 @@ VOID litepcie_dma_reader_start(PDEVICE_CONTEXT dev, UINT32 index)
 
     dmachan = &dev->chan[index].dma;
 
+    /* Validate Interrupt Config */
+    if(dmachan->reader_intr_count == 0)
+    {
+        dmachan->reader_intr_count = DMA_BUFFER_PER_IRQ;
+    }
+    else if (dmachan->reader_intr_count > (DMA_BUFFER_COUNT / 2))
+    {
+        dmachan->reader_intr_count = (DMA_BUFFER_COUNT / 2);
+    }
+
     /* Fill DMA Reader descriptors. */
     litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_READER_ENABLE_OFFSET, 0);
     litepciedrv_RegWritel(dev, dmachan->base + PCIE_DMA_READER_TABLE_FLUSH_OFFSET, 1);
@@ -609,7 +631,7 @@ VOID litepcie_dma_reader_start(PDEVICE_CONTEXT dev, UINT32 index)
 #ifndef DMA_BUFFER_ALIGNED
             DMA_LAST_DISABLE |
 #endif
-            ((!((i % DMA_BUFFER_PER_IRQ) == (DMA_BUFFER_PER_IRQ - 1))) * DMA_IRQ_DISABLE) | /* generate an msi */
+            ((!((i % dmachan->reader_intr_count) == (dmachan->reader_intr_count - 1))) * DMA_IRQ_DISABLE) | /* generate an msi */
             DMA_RD_BUFFER_SIZE);                                  /* every n buffers */
 
         PHYSICAL_ADDRESS reader_addr = WdfCommonBufferGetAlignedLogicalAddress(dmachan->readBuffer[i]);

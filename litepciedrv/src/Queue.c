@@ -250,6 +250,7 @@ Return Value:
                     if (pDmaWriterInData->enable != fileCtx->dmaChan->dma.writer_enable) {
                         /* enable / disable DMA */
                         if (pDmaWriterInData->enable) {
+                            fileCtx->dmaChan->dma.writer_intr_count = pDmaWriterInData->interrupt_count;
                             litepcie_dma_writer_start(fileCtx->dmaChan->litepcie_dev, fileCtx->dmaChan->index);
                             litepcie_enable_interrupt(fileCtx->dmaChan->litepcie_dev, fileCtx->dmaChan->dma.writer_interrupt);
                         }
@@ -261,6 +262,7 @@ Return Value:
 
                     fileCtx->dmaChan->dma.writer_enable = pDmaWriterInData->enable;
 
+                    pDmaWriterOutData->interrupt_count = fileCtx->dmaChan->dma.writer_intr_count;
                     pDmaWriterOutData->hw_count = fileCtx->dmaChan->dma.writer_hw_count;
                     pDmaWriterOutData->sw_count = fileCtx->dmaChan->dma.writer_sw_count;
                     pDmaWriterOutData->lost_count = fileCtx->dmaChan->dma.writer_overflows;
@@ -293,6 +295,7 @@ Return Value:
                     if (pDmaReaderInData->enable != fileCtx->dmaChan->dma.reader_enable) {
                         /* enable / disable DMA */
                         if (pDmaReaderInData->enable) {
+                            fileCtx->dmaChan->dma.reader_intr_count = pDmaReaderInData->interrupt_count;
                             litepcie_dma_reader_start(fileCtx->dmaChan->litepcie_dev, fileCtx->dmaChan->index);
                             litepcie_enable_interrupt(fileCtx->dmaChan->litepcie_dev, fileCtx->dmaChan->dma.reader_interrupt);
                         }
@@ -304,6 +307,7 @@ Return Value:
 
                     fileCtx->dmaChan->dma.reader_enable = pDmaReaderInData->enable;
 
+                    pDmaReaderOutData->interrupt_count = fileCtx->dmaChan->dma.reader_intr_count;
                     pDmaReaderOutData->hw_count = fileCtx->dmaChan->dma.reader_hw_count;
                     pDmaReaderOutData->sw_count = fileCtx->dmaChan->dma.reader_sw_count;
                     pDmaReaderOutData->lost_count = fileCtx->dmaChan->dma.reader_overflows;
