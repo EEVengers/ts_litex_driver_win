@@ -101,11 +101,11 @@ VOID litepciedrv_RegWritel(PDEVICE_CONTEXT dev, UINT32 reg, UINT32 val);
 
 VOID litepciedrv_ChannelRead(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T length);
 
-VOID litepciedrv_ChannelReadCancel(WDFREQUEST request);
+EVT_WDF_REQUEST_CANCEL litepciedrv_ChannelReadCancel;
 
 VOID litepciedrv_ChannelWrite(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T length);
 
-VOID litepciedrv_ChannelWriteCancel(WDFREQUEST request);
+EVT_WDF_REQUEST_CANCEL litepciedrv_ChannelWriteCancel;
 
 VOID litepcie_dma_writer_start(PDEVICE_CONTEXT dev, UINT32 index);
 
@@ -118,5 +118,10 @@ VOID litepcie_dma_reader_stop(PDEVICE_CONTEXT dev, UINT32 index);
 VOID litepcie_enable_interrupt(PDEVICE_CONTEXT dev, UINT32 interrupt);
 
 VOID litepcie_disable_interrupt(PDEVICE_CONTEXT dev, UINT32 interrupt);
+
+EVT_WDF_INTERRUPT_ISR litepcie_EvtIsr;
+EVT_WDF_INTERRUPT_DPC litepcie_EvtDpc;
+EVT_WDF_INTERRUPT_ENABLE litepcie_EvtIntEnable;
+EVT_WDF_INTERRUPT_DISABLE litepcie_EvtIntDisable;
 
 EXTERN_C_END
