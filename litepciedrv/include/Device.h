@@ -31,6 +31,8 @@ struct litepcie_dma_chan {
     SIZE_T writeReqBytes;
     WDFCOMMONBUFFER readBuffer[DMA_BUFFER_COUNT];
     WDFCOMMONBUFFER writeBuffer[DMA_BUFFER_COUNT];
+    UINT32 reader_intr_count;
+    UINT32 writer_intr_count;
     volatile INT64 reader_hw_count;
     volatile INT64 reader_hw_count_last;
     INT64 reader_sw_count;
