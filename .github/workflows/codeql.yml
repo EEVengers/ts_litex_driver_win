@@ -1,0 +1,40 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [main, "*dev"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  analyze:
+    # Temporarily Disable codeql workflow
+    if: false
+    name: Analyze
+    runs-on: windows-2025
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        tools: "https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.20.1/codeql-bundle-win64.tar.gz"
+        languages: 'c-cpp'
+        build-mode: 'manual'
+        packs: microsoft/cpp-queries@0.0.4,microsoft/windows-drivers@1.8.0
+        
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.1.3
+      with:
+        msbuild-architecture: x64
+
+    - name: Build Driver
+      run: .\builddriver.bat
+    
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3

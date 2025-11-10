@@ -1,8 +1,11 @@
 x64/
 .vs/
+.vscode/
 Debug/
 *.vcxproj.user
-csr.h
-soc.h
 build/*
 artifacts/*
+ARM64/
+*.sarif
+codeql_db/
+packages/

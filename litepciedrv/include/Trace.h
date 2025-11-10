@@ -22,7 +22,7 @@ Environment:
 
 #define WPP_CONTROL_GUIDS                                              \
     WPP_DEFINE_CONTROL_GUID(                                           \
-        litepciedrvTraceGuid, (08edbd61,2846,4247,ad9b,2631e20a1583), \
+        litepciedrvTraceGuid, (159f9468,5eab,44f4,8be2,02e2888186d2), \
                                                                             \
         WPP_DEFINE_BIT(MYDRIVER_ALL_INFO)                              \
         WPP_DEFINE_BIT(TRACE_DRIVER)                                   \

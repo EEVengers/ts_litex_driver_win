@@ -29,18 +29,18 @@ struct litepcie_dma_chan {
     WDFREQUEST writeRequest;
     SIZE_T writeBytes;
     SIZE_T writeReqBytes;
-    WDFCOMMONBUFFER readBuffer;
-    WDFCOMMONBUFFER writeBuffer;
-    PVOID reader_handle[DMA_BUFFER_COUNT];
-    PVOID writer_handle[DMA_BUFFER_COUNT];
-    PHYSICAL_ADDRESS reader_addr[DMA_BUFFER_COUNT];
-    PHYSICAL_ADDRESS writer_addr[DMA_BUFFER_COUNT];
+    WDFCOMMONBUFFER readBuffer[DMA_BUFFER_COUNT];
+    WDFCOMMONBUFFER writeBuffer[DMA_BUFFER_COUNT];
+    UINT32 reader_intr_count;
+    UINT32 writer_intr_count;
     volatile INT64 reader_hw_count;
     volatile INT64 reader_hw_count_last;
     INT64 reader_sw_count;
+    INT64 reader_overflows;
     volatile INT64 writer_hw_count;
     volatile INT64 writer_hw_count_last;
     INT64 writer_sw_count;
+    INT64 writer_overflows;
     UINT8 writer_enable;
     UINT8 reader_enable;
     UINT8 reader_lock;
@@ -50,7 +50,6 @@ struct litepcie_dma_chan {
 typedef struct litepcie_chan {
     struct _DEVICE_CONTEXT* litepcie_dev;
     struct litepcie_dma_chan dma;
-    UINT32 block_size;
     UINT32 index;
 }LITEPCIE_CHAN, *PLITEPCIE_CHAN;
 
@@ -104,11 +103,11 @@ VOID litepciedrv_RegWritel(PDEVICE_CONTEXT dev, UINT32 reg, UINT32 val);
 
 VOID litepciedrv_ChannelRead(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T length);
 
-VOID litepciedrv_ChannelReadCancel(WDFREQUEST request);
+EVT_WDF_REQUEST_CANCEL litepciedrv_ChannelReadCancel;
 
 VOID litepciedrv_ChannelWrite(PLITEPCIE_CHAN channel, WDFREQUEST request, SIZE_T length);
 
-VOID litepciedrv_ChannelWriteCancel(WDFREQUEST request);
+EVT_WDF_REQUEST_CANCEL litepciedrv_ChannelWriteCancel;
 
 VOID litepcie_dma_writer_start(PDEVICE_CONTEXT dev, UINT32 index);
 
@@ -121,5 +120,10 @@ VOID litepcie_dma_reader_stop(PDEVICE_CONTEXT dev, UINT32 index);
 VOID litepcie_enable_interrupt(PDEVICE_CONTEXT dev, UINT32 interrupt);
 
 VOID litepcie_disable_interrupt(PDEVICE_CONTEXT dev, UINT32 interrupt);
+
+EVT_WDF_INTERRUPT_ISR litepcie_EvtIsr;
+EVT_WDF_INTERRUPT_DPC litepcie_EvtDpc;
+EVT_WDF_INTERRUPT_ENABLE litepcie_EvtIntEnable;
+EVT_WDF_INTERRUPT_DISABLE litepcie_EvtIntDisable;
 
 EXTERN_C_END

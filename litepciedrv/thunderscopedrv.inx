@@ -1,0 +1,100 @@
+;
+; thunderscopedrv.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class="EEVengers_TM"
+ClassGuid={424b517a-019e-4a7a-9ee4-e985187d7d86} 
+Provider=%ManufacturerName%
+CatalogFile=thunderscopedrv.cat
+DriverVer=
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+thunderscopedrv_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+thunderscopedrv.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=EEVengers_TMClassReg
+
+[EEVengers_TMClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-9
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=EEVengers,NT$ARCH$
+
+[EEVengers.NT$ARCH$]
+; DisplayName				Section					DeviceId
+; -----------				-------					--------
+%thunderscopedrv.DeviceDesc%=	thunderscopedrv_Device,		PCI\VEN_20A7&DEV_0101
+
+[thunderscopedrv_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+thunderscopedrv.sys
+
+; MSI/MSI-X support
+[thunderscopedrv_Device.NT.HW]
+AddReg = thunderscopedrv_Device.EnableMSI
+
+[thunderscopedrv_Device.EnableMSI]
+HKR,"Interrupt Management",,0x00000010
+HKR,"Interrupt Management\MessageSignaledInterruptProperties",,0x00000010
+HKR,"Interrupt Management\MessageSignaledInterruptProperties",MSISupported,0x00010001,1
+HKR,"Interrupt Management\MessageSignaledInterruptProperties",MessageNumberLimit,0x00010001,32
+
+;-------------- Service installation
+[thunderscopedrv_Device.NT.Services]
+AddService = thunderscopedrv,%SPSVCINST_ASSOCSERVICE%, thunderscopedrv_Service_Inst
+
+; -------------- thunderscopedrv driver install sections
+[thunderscopedrv_Service_Inst]
+DisplayName    = %thunderscopedrv.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\thunderscopedrv.sys
+
+;
+;--- thunderscopedrv_Device Coinstaller installation ------
+;
+
+[thunderscopedrv_Device.NT.CoInstallers]
+AddReg=thunderscopedrv_Device_CoInstaller_AddReg
+CopyFiles=thunderscopedrv_Device_CoInstaller_CopyFiles
+
+[thunderscopedrv_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+HKR,Parameters,DmaRemappingCompatible,0x00010001,1    ; where 1 = opt-in
+
+[thunderscopedrv_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[thunderscopedrv_Device.NT.Wdf]
+KmdfService =  thunderscopedrv, thunderscopedrv_wdfsect
+[thunderscopedrv_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="EEVengers"
+ClassName = "Test and measurement devices"
+DiskName = "ThunderScope Installation Disk"
+thunderscopedrv.DeviceDesc = "ThunderScope"
+thunderscopedrv.SVCDESC = "TS Driver Service"

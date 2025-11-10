@@ -20,7 +20,6 @@ extern "C" {
 #pragma warning (pop)
 
 #include "csr.h"
-#include "soc.h"
 #include "litepcie_dmadrv.h"
 
 /* spi */
@@ -56,14 +55,18 @@ struct litepcie_ioctl_dma {
 
 struct litepcie_ioctl_dma_writer {
 	uint8_t enable;
+	uint32_t interrupt_count;
 	int64_t hw_count;
 	int64_t sw_count;
+	int64_t lost_count;
 };
 
 struct litepcie_ioctl_dma_reader {
 	uint8_t enable;
+	uint32_t interrupt_count;
 	int64_t hw_count;
 	int64_t sw_count;
+	int64_t lost_count;
 };
 
 struct litepcie_ioctl_lock {
@@ -106,10 +109,9 @@ struct litepcie_ioctl_mmap_dma_update {
 //
 // Define an Interface Guid so that apps can find the device and talk to it.
 //
-
 DEFINE_GUID (GUID_DEVINTERFACE_litepciedrv,
-        0x164adc02, 0xe1ae, 0x4fe1, 0xa9, 0x4, 0x9a, 0x1, 0x35, 0x77, 0xb8, 0x91);
-    // {164ADC02-E1AE-4FE1-A904-9A013577B891}
+        0xdac3fa32, 0xb912, 0x4302, 0xa1, 0xe7, 0xc3, 0x72, 0x99, 0x5, 0x3d, 0xac);
+    // {DAC3FA32-B912-4302-A1E7-C37299053DAC}
 
 #ifdef __cplusplus
 }

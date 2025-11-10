@@ -23,31 +23,30 @@ add_custom_command(
 )
 #]]
 
-set(litepciedrv_SOURCES
+set(thunderscopedrv_SOURCES
     src/Driver.c
     src/Device.c
     src/Queue.c
     )
 
-set(litepciedrv_HEADERS
+set(thunderscopedrv_HEADERS
     include/Device.h
     include/Driver.h
     include/Queue.h
     include/Trace.h
     )
 
-set(litepciedrv_PUBLIC_HEADERS
+set(thunderscopedrv_PUBLIC_HEADERS
     public_h/litepcie_dmadrv.h
     public_h/litepcie.h
     public_h/csr.h
-    public_h/soc.h
     )
 
 #add_library(litepciedrv STATIC ${litepciedrv_SOURCES} ${litepciedrv_HEADERS} ${litepciedrv_PUBLIC_HEADERS})
-wdk_add_driver(litepciedrv KMDF 1.33 WINVER 10 ${litepciedrv_SOURCES} ${litepciedrv_HEADERS} ${litepciedrv_PUBLIC_HEADERS})
+wdk_add_driver(litepciedrv KMDF 1.33 WINVER 10 ${thunderscopedrv_SOURCES} ${thunderscopedrv_HEADERS} ${thunderscopedrv_PUBLIC_HEADERS})
 
 #<PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
-set_target_properties(litepciedrv 
+set_target_properties(thunderscopedrv 
                     PROPERTIES VS_PLATFORM_TOOLSET "WindowsKernelModeDriver10.0"
                                VS_WINDOWS_TARGET_PLATFORM_MIN_VERSION "10"
  #                              VS_CONFIGURATION_TYPE "Driver"
@@ -56,6 +55,6 @@ set_target_properties(litepciedrv
  )
 
 #target_include_directories(litepcie PUBLIC include)
-target_include_directories(litepciedrv PUBLIC public_h PRIVATE include)
+target_include_directories(thunderscopedrv PUBLIC public_h PRIVATE include)
 
-#target_link_libraries(litepciedrv WdfDriverEntry WdfLdr)
+#target_link_libraries(thunderscopedrv WdfDriverEntry WdfLdr)

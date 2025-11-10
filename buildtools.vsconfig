@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "components": [
+    "Microsoft.VisualStudio.Component.Roslyn.Compiler",
+    "Microsoft.Component.MSBuild",
+    "Microsoft.VisualStudio.Component.CoreBuildTools",
+    "Microsoft.VisualStudio.Workload.MSBuildTools",
+    "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+    "Microsoft.VisualStudio.Component.VC.Runtimes.x86.x64.Spectre",
+    "Component.Microsoft.Windows.DriverKit.BuildTools"
+  ],
+  "extensions": []
+}
