@@ -8,7 +8,7 @@ for /f "tokens=1" %%a in ('"git show -s --format=%%cd --date=format:%%m/%%d/%%Y"
 for /f "tokens=2" %%a in ('"git show -s --format=%%ci"') do SET COMMIT_TIMESTAMP=%%a
 Set COMMIT_VERSION=%COMMIT_TIMESTAMP::=.%
 
-msbuild ts_litex_driver.sln -t:build -restore -p:RestorePackagesConfig=true /p:Platform=x64
+msbuild ts_litex_driver.sln -t:restore -p:RestorePackagesConfig=true /p:Platform=x64
 msbuild ts_litex_driver.sln /p:Configuration=Debug /p:Platform=x64 /p:DriverDate=%COMMIT_DATE% /p:DriverVersion=%COMMIT_VERSION%
 msbuild ts_litex_driver.sln /p:Configuration=Release /p:Platform=x64 /p:DriverDate=%COMMIT_DATE% /p:DriverVersion=%COMMIT_VERSION%
 

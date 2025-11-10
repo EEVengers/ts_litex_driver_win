@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36212.18 d17.14
+VisualStudioVersion = 17.14.36212.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "thunderscopedrv", "litepciedrv\thunderscopedrv.vcxproj", "{E83BF3B9-E9D9-4D61-880E-3DAC74774DE0}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "thunderscopedrv_package", "thunderscopedrv_package\thunderscopedrv_package.vcxproj", "{B5A6859B-55ED-E5F7-3265-811C2755E58E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,18 +25,6 @@ Global
 		{E83BF3B9-E9D9-4D61-880E-3DAC74774DE0}.Release|x64.ActiveCfg = Release|x64
 		{E83BF3B9-E9D9-4D61-880E-3DAC74774DE0}.Release|x64.Build.0 = Release|x64
 		{E83BF3B9-E9D9-4D61-880E-3DAC74774DE0}.Release|x64.Deploy.0 = Release|x64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Debug|ARM64.Build.0 = Debug|ARM64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Debug|ARM64.Deploy.0 = Debug|ARM64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Debug|x64.ActiveCfg = Debug|x64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Debug|x64.Build.0 = Debug|x64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Debug|x64.Deploy.0 = Debug|x64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Release|ARM64.ActiveCfg = Release|ARM64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Release|ARM64.Build.0 = Release|ARM64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Release|ARM64.Deploy.0 = Release|ARM64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Release|x64.ActiveCfg = Release|x64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Release|x64.Build.0 = Release|x64
-		{B5A6859B-55ED-E5F7-3265-811C2755E58E}.Release|x64.Deploy.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
