@@ -164,7 +164,6 @@ Return Value:
     WDF_FILEOBJECT_CONFIG fileConfig;
     WDF_FILEOBJECT_CONFIG_INIT(&fileConfig, litepciedrvEvtDeviceFileCreate, litepciedrvEvtFileClose, litepciedrvEvtFileCleanup);
     WDF_OBJECT_ATTRIBUTES_INIT(&fileAttributes);
-    fileAttributes.SynchronizationScope = WdfSynchronizationScopeNone;
     WDF_OBJECT_ATTRIBUTES_SET_CONTEXT_TYPE(&fileAttributes, FILE_CONTEXT);
     WdfDeviceInitSetFileObjectConfig(DeviceInit, &fileConfig, &fileAttributes);
 
