@@ -548,20 +548,20 @@ VOID litepciedrvEvtDeviceFileCreate(
     PFILE_CONTEXT devNode = GetFileContext(WdfFile);
     NTSTATUS status = STATUS_SUCCESS;
 
-    if (fileName == NULL) {
+    if (fileName == NULL || fileName->Length == 0) {
         TraceEvents(TRACE_LEVEL_ERROR, TRACE_QUEUE, "Error: no filename given.");
         status = STATUS_INVALID_PARAMETER;
         goto ErrExit;
     }
 
-    if (0 == wcscmp(fileName->Buffer, L"\\CTRL"))
+    if (0 == wcsncmp(L"\\CTRL", fileName->Buffer, fileName->Length / sizeof(WCHAR)))
     {
         devNode->dev = LITEPCIE_CTRL;
         devNode->ctx = ctx;
         devNode->dmaChan = NULL;
         TraceEvents(TRACE_LEVEL_VERBOSE, TRACE_QUEUE, "Opening LitePCIe REG device");
     }
-    else if (0 == wcsncmp(fileName->Buffer, L"\\DMA", 4))
+    else if (0 > wcsncmp(L"\\DMA", fileName->Buffer, fileName->Length / sizeof(WCHAR)))
     {
         UINT32 channelId;
         if (1 != swscanf_s((const wchar_t*)fileName->Buffer, L"\\DMA%d", &channelId))

@@ -7,5 +7,6 @@ build/*
 artifacts/*
 ARM64/
 *.sarif
+*.DVL.XML
 codeql_db/
 packages/
