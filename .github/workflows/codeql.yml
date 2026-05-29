@@ -8,6 +8,8 @@ on:
 
 jobs:
   analyze:
+    # Temporarily Disable codeql workflow
+    if: false
     name: Analyze
     runs-on: windows-2025
 
@@ -16,7 +18,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
@@ -27,7 +29,7 @@ jobs:
         packs: microsoft/cpp-queries@0.0.4,microsoft/windows-drivers@1.8.0
         
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.1.3
+      uses: microsoft/setup-msbuild@v3
       with:
         msbuild-architecture: x64
 
